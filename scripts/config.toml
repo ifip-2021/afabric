@@ -1,0 +1,146 @@
+use_deadline = true
+link_rate = 10
+mean_link_delay = 0.0000002
+host_delay = 0.000020
+queue_size = 140
+connections_per_pair = 1
+pareto_shape = 1.05
+enable_dupack = false
+rtx_on_eof = false
+reset_window_on_eof = false
+eof_min_rto = -1.0
+no_eof_min_rto = -1.0
+good_queue_size = -1
+
+enable_multi_path = 1
+per_flow_mp = 0
+
+ack_ratio = 1
+slow_start_restart = true
+dctcp_g = 0.0625
+prob_cap = 5
+
+dctcp_k = 65.0
+drop_prio = true
+deque_prio = true
+keep_order = true
+drop_low_prio = false
+use_fifo_processing_order = false
+expiration_time_controller = false
+use_true_remaining_size = false
+ecn_scheme = 2
+afabric_ecn_enable = false
+
+[scale]
+    [scale.final]
+    sim_end = 100000
+    topology_spt = 16
+    topology_tors = 9
+    topology_spines = 4
+    topology_x = 1
+
+    [scale.tiny]
+    sim_end = 1000
+    topology_spt = 2
+    topology_tors = 4
+    topology_spines = 2
+    topology_x = 1
+
+    [scale.tor]
+    sim_end = 1000
+    topology_spt = 8
+    topology_tors = 1
+    topology_spines = 1
+    topology_x = 1
+
+    [scale.small]
+    sim_end = 10000
+    topology_spt = 8
+    topology_tors = 4
+    topology_spines = 4
+    topology_x = 1
+
+[input]
+    [input.data_mining]
+    max_num_chunks = 100
+    arrivals.flow_size.cdf = "CDF_vl2.tcl"
+    pias_thresh_0 = [  750,   745,   907,   840,   805]
+    pias_thresh_1 = [ 1083,  1083,  1301,  1232,  1106]
+    pias_thresh_2 = [ 1416,  1391,  1619,  1617,  1401]
+    pias_thresh_3 = [13705, 13689, 12166, 11950, 10693]
+    pias_thresh_4 = [14952, 14936, 12915, 12238, 11970]
+    pias_thresh_5 = [21125, 21149, 21313, 21494, 21162]
+    pias_thresh_6 = [28253, 27245, 26374, 25720, 22272]
+
+    [input.web_search]
+    arrivals.mean_flow_size = 1138
+    arrivals.flow_size.cdf = "CDF_dctcp.tcl"
+    max_num_chunks = 20000
+    pias_thresh_0 = [ 759,  909,  999,  956, 1059]
+    pias_thresh_1 = [1132, 1329, 1305, 1381, 1412]
+    pias_thresh_2 = [1456, 1648, 1564, 1718, 1643]
+    pias_thresh_3 = [1737, 1960, 1763, 2028, 1869]
+    pias_thresh_4 = [2010, 2143, 1956, 2297, 2008]
+    pias_thresh_5 = [2199, 2337, 2149, 2551, 2115]
+    pias_thresh_6 = [2325, 2484, 2309, 2660, 2184]
+
+[slacks]
+    [slacks.default]
+
+[buffer]
+    [buffer.pias]
+    queue_size = 240
+    switch_alg = "Priority"
+    prio_num = 8
+    prio_scheme = "bytes_sent"
+    enable_delay = false
+    use_deadline = false
+
+    [buffer.pfabric]
+    queue_size = 240
+    switch_alg = "DropTail"
+    prio_num = 0
+    prio_scheme = "remaining_size"
+    enable_delay = false
+    use_deadline = false
+
+    [buffer.las]
+    queue_size = 240
+    switch_alg = "DropTail"
+    prio_num = 0
+    prio_scheme = "bytes_sent"
+    enable_delay = false
+    use_deadline = false
+    # unused
+
+    [buffer.ascc]
+    queue_size = 240
+    switch_alg = "DropTail"
+    prio_scheme = "lazy_remaining_size"
+    use_deadline = false
+    prio_num = 0
+    drop_low_prio = true
+    # unused
+    enable_delay = false
+
+[control]
+    [control.pias]
+    source_alg = "MinTCP-Sack"
+    enable_early_expiration = false
+    min_rto = 0.002
+    init_window = 70
+
+    [control.ascc]
+    source_alg = "MinTCP-Sack"
+    enable_early_expiration = false
+    min_rto = 0.002
+    init_window = 70
+    reset_window_on_eof = false
+    rtx_on_eof = true
+
+    [control.pfabric_clairvoyant]
+    source_alg = "MinTCP-Sack"
+    enable_early_expiration = false
+    use_true_remaining_size = true
+    min_rto = 0.002
+    init_window = 70
